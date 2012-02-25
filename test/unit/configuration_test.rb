@@ -47,9 +47,9 @@ module Tire
       end
 
       should "return set and return logger" do
-        Configuration.logger STDERR
+        Configuration.logger Logger.new(STDERR)
         assert_not_nil Configuration.logger
-        assert_instance_of Tire::Logger, Configuration.logger
+        assert_instance_of Logger, Configuration.logger
       end
 
       should "allow to reset the configuration for specific property" do

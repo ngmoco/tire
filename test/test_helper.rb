@@ -7,10 +7,9 @@ require 'yajl/json_gem'
 require 'sqlite3'
 
 require 'shoulda'
-require 'turn/autorun' unless ENV["TM_FILEPATH"] || ENV["CI"]
 require 'mocha'
 
-require 'active_support/core_ext/hash/indifferent_access'
+require 'test/models/article'
 
 require 'tire'
 
@@ -54,7 +53,7 @@ module Test::Integration
     end
     ::RestClient.post "#{URL}/articles-test/_refresh", ''
 
-    Dir[File.dirname(__FILE__) + '/models/**/*.rb'].each { |m| load m }
+    # Dir[File.dirname(__FILE__) + '/models/**/*.rb'].each { |m| load m }
   end
 
   def teardown

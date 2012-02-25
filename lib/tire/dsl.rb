@@ -21,7 +21,7 @@ module Tire
         results  = Results::Collection.new(json, options)
       end
     rescue Exception => error
-      STDERR.puts "[REQUEST FAILED] #{error.class} #{error.message rescue nil}\n"
+      Configuration.error "[REQUEST FAILED] #{error.class} #{error.message rescue nil}"
       raise
     ensure
     end

@@ -166,7 +166,7 @@ puts        '-'*80, ''; sleep 1
 
 run "rm -f app/models/article.rb"
 file 'app/models/article.rb', <<-CODE
-class Article < ActiveRecord::Base
+class Article
   include Tire::Model::Search
   include Tire::Model::Callbacks
 end
@@ -174,7 +174,7 @@ CODE
 
 initializer 'tire.rb', <<-CODE
 Tire.configure do
-  logger STDERR
+  logger(Logger.new(STDERR))
 end
 CODE
 

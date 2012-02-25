@@ -69,7 +69,7 @@ module Tire
         id   = get_id_from_document(document)
         type = get_type_from_document(document)
 
-        STDERR.puts "[ERROR] Document #{document.inspect} does not have ID" unless id
+        Configuration.error "[ERROR] Document #{document.inspect} does not have ID" unless id
 
         output = []
         output << %Q|{"index":{"_index":"#{@name}","_type":"#{type}","_id":"#{id}"}}|
@@ -88,10 +88,10 @@ module Tire
       rescue Exception => error
         if count < tries
           count += 1
-          STDERR.puts "[ERROR] #{error.message}, retrying (#{count})..."
+          Configuration.error "[ERROR] #{error.message}, retrying (#{count})..."
           retry
         else
-          STDERR.puts "[ERROR] Too many exceptions occured, giving up. The HTTP response was: #{error.message}"
+          Configuration.error "[ERROR] Too many exceptions occured, giving up. The HTTP response was: #{error.message}"
         end
 
       ensure
@@ -244,11 +244,11 @@ module Tire
       if Configuration.logger
         error = $!
 
-        Configuration.logger.log_request endpoint, @name, curl
+        Configuration.log_request endpoint, @name, curl
 
         code = @response ? @response.code : error.class rescue 200
 
-        if Configuration.logger.level.to_s == 'debug'
+        if Configuration.logger.debug?
           body = if @response
             defined?(Yajl) ? Yajl::Encoder.encode(@response.body, :pretty => true) : MultiJson.encode(@response.body)
           else
@@ -258,7 +258,7 @@ module Tire
           body = ''
         end
 
-        Configuration.logger.log_response code, nil, body
+        Configuration.log_response code, nil, body
       end
     end
 

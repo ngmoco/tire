@@ -132,22 +132,22 @@ module Tire
       end
 
       should "log request, but not response, when logger is set" do
-        Configuration.logger STDERR
+        Configuration.logger Logger.new(STDERR)
 
         Configuration.client.expects(:get).returns(mock_response( '{"took":1,"hits":[]}', 200 ))
 
         Results::Collection.expects(:new).returns([])
-        Configuration.logger.expects(:log_request).returns(true)
-        Configuration.logger.expects(:log_response).with(200, 1, '')
+        Configuration.expects(:log_request).returns(true)
+        Configuration.expects(:log_response).with(200, 1, "{\n  \'hits\': [\n\n  ],\n  \'took\': 1\n}")
 
         Search::Search.new('index').perform
       end
 
       should "log the original exception on failed request" do
-        Configuration.logger STDERR
+        Configuration.logger Logger.new(STDERR)
 
         Configuration.client.expects(:get).raises(Errno::ECONNREFUSED)
-        Configuration.logger.expects(:log_response).with('N/A', 'N/A', '')
+        Configuration.expects(:log_response).with('N/A', 'N/A', '')
 
         assert_raise Errno::ECONNREFUSED do
           Search::Search.new('index').perform

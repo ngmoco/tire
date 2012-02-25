@@ -80,7 +80,7 @@ module Tire
       def perform
         @response = Configuration.client.get(self.url, self.to_json)
         if @response.failure?
-          STDERR.puts "[REQUEST FAILED] #{self.to_curl}\n"
+          Configuration.error "[REQUEST FAILED] #{self.to_curl}\n"
           raise SearchRequestFailed, @response.to_s
         end
         @json     = MultiJson.decode(@response.body)
@@ -115,12 +115,12 @@ module Tire
       def logged(error=nil)
         if Configuration.logger
 
-          Configuration.logger.log_request '_search', indices, to_curl
+          Configuration.log_request '_search', indices, to_curl
 
           took = @json['took']  rescue nil
           code = @response.code rescue nil
 
-          if Configuration.logger.level.to_s == 'debug'
+          if Configuration.logger.debug?
             # FIXME: Depends on RestClient implementation
             body = if @json
               defined?(Yajl) ? Yajl::Encoder.encode(@json, :pretty => true) : MultiJson.encode(@json)
@@ -131,7 +131,7 @@ module Tire
             body = ''
           end
 
-          Configuration.logger.log_response code || 'N/A', took || 'N/A', body || 'N/A'
+          Configuration.log_response code || 'N/A', took || 'N/A', body || 'N/A'
         end
       end
 
